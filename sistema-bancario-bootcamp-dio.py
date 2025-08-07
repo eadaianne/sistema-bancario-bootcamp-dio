@@ -4,8 +4,7 @@ LIMITE_SAQUE = 500.00
 LIMITE_SAQUES_DIARIOS = 3
 saques_realizados = 0
 
-def saque(valor):
-    global saldo, saques_realizados
+def saque(*, saldo, saques_realizados, valor):
 
     if valor > LIMITE_SAQUE:
         print(f"Valor do saque excede o limite de R$ {LIMITE_SAQUE:.2f}.")
@@ -21,6 +20,7 @@ def saque(valor):
     extrato.append(f"Saque: R$ {valor:.2f}")
     saques_realizados += 1
     print(f"Saque de R$ {valor:.2f} realizado com sucesso.")
+    return saldo, saques_realizados
 
 def deposito(valor):
     global saldo
@@ -56,7 +56,7 @@ def main():
         
         if opcao == '1':
             valor = float(input("Informe o valor do saque: R$ "))
-            saque(valor)
+            saque(saldo = saldo, saques_realizados = saques_realizados, valor = valor)
         elif opcao == '2':
             valor = float(input("Informe o valor do depósito: R$ "))
             deposito(valor)
