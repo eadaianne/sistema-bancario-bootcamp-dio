@@ -48,16 +48,18 @@ def exibir_menu():
     print("4. Sair")
 
 def main():
+    global saldo, saques_realizados
+    print("Bem-vindo ao Sistema Bancário!")
     while True:
         exibir_menu()
         opcao = input("Escolha uma opção: ")
         
         if opcao == '1':
             valor = float(input("Informe o valor do saque: R$ "))
-            saque(saldo = saldo, saques_realizados = saques_realizados, valor = valor)
+            saldo, saques_realizados = saque(saldo = saldo, saques_realizados = saques_realizados, valor = valor)
         elif opcao == '2':
             valor = float(input("Informe o valor do depósito: R$ "))
-            deposito(saldo, valor)
+            saldo = deposito(saldo, valor)
         elif opcao == '3':
             extrato_bancario()
         elif opcao == '4':
