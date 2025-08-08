@@ -61,7 +61,19 @@ def formata_endereco():
     cidade = input("Informe a cidade: ")
     estado = input("Informe o estado (sigla): ")
     endereco_formatado = f"{logradouro}, {numero} - {bairro} - {cidade}/{estado}"
-    return endereco_formatado    
+    return endereco_formatado
+
+def exibir_informacoes_usuario(cpf):
+    if not any(usuario['cpf'] == cpf for usuario in usuarios):
+        print("Usuário não encontrado.")
+        return
+    else: 
+        usuario = next(usuario for usuario in usuarios if usuario['cpf'] == cpf)
+        print(f"===== INFORMAÇÕES DO USUÁRIO: =====")
+        print(f"Nome: {usuario['nome']}")
+        print(f"Data de Nascimento: {usuario['data_nascimento']}")
+        print(f"CPF: {usuario['cpf']}")
+        print(f"Endereço: {usuario['endereco']}")
 
 def exibir_menu():
     print("\n===== MENU =====")
@@ -69,7 +81,8 @@ def exibir_menu():
     print("2. Depósito")
     print("3. Extrato")
     print("4. Criar nova conta")
-    print("5. Sair")
+    print("5. Exibir informações do usuário")
+    print("6. Sair")
 
 def main():
     global saldo, saques_realizados, extrato, usuarios
@@ -111,6 +124,10 @@ def main():
             print("Conta criada com sucesso!")
 
         elif opcao == '5':
+            cpf = input("Informe o CPF do usuário: ")
+            exibir_informacoes_usuario(cpf)
+
+        elif opcao == '6':
             print("Saindo do sistema. Até logo!")
             break
 
