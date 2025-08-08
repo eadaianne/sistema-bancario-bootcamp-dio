@@ -1,9 +1,8 @@
+LIMITE_SAQUE = 500.00
+LIMITE_SAQUES_DIARIOS = 3
 saldo = 0.00
 extrato = []
 usuarios = []
-LIMITE_SAQUE = 500.00
-LIMITE_SAQUES_DIARIOS = 3
-saques_realizados = 0
 
 def saque(*, saldo, saques_realizados, valor):
     if valor > LIMITE_SAQUE:
@@ -21,6 +20,21 @@ def saque(*, saldo, saques_realizados, valor):
     print(f"Saque de R$ {valor:.2f} realizado com sucesso.")
     return saldo, saques_realizados, f"Saque: R$ {valor:.2f}"
 
+def executar_saque(saldo, saques_realizados):
+    try:
+        valor = float(input("Informe o valor do saque: R$ "))
+        saldo, saques_realizados, descricao = saque(
+            saldo=saldo, saques_realizados=saques_realizados, valor=valor
+        )
+    except ValueError:
+        print("Valor inválido. Por favor, insira um número válido.")
+        return saldo, saques_realizados, None
+    
+    if descricao:
+        extrato.append(descricao)
+        
+    return saldo, saques_realizados
+
 def deposito(saldo, valor, /):
     if valor <= 0:
         print("Valor do depósito deve ser positivo.")
@@ -28,6 +42,19 @@ def deposito(saldo, valor, /):
     saldo += valor
     print(f"Depósito de R$ {valor:.2f} realizado com sucesso.")
     return saldo, f"Depósito: R$ {valor:.2f}"
+
+def executar_deposito(saldo):
+    try:
+        valor = float(input("Informe o valor do depósito: R$ "))
+        saldo, descricao = deposito(saldo, valor)
+    except ValueError:
+        print("Valor inválido. Por favor, insira um número válido.")
+        return saldo, None
+    
+    if descricao:
+        extrato.append(descricao)
+        
+    return saldo
 
 def extrato_bancario(saldo, *, extrato):
     print("\n===== EXTRATO BANCÁRIO =====")
@@ -38,20 +65,23 @@ def extrato_bancario(saldo, *, extrato):
             print(linha)
     print(f"Saldo atual: R$ {saldo:.2f}")
 
+def executar_extrato_bancario(saldo, extrato):
+    extrato_bancario(saldo, extrato=extrato)
+
 def criar_nova_conta(*, nome, data_nascimento, cpf, endereco):
     validar_cpf(cpf)
     usuario = {
-        'nome': nome,
-        'data_nascimento': data_nascimento,
-        'cpf': cpf,
-        'endereco': endereco
+        "nome": nome,
+        "data_nascimento": data_nascimento,
+        "cpf": cpf,
+        "endereco": endereco,
     }
     return usuario
 
 def validar_cpf(cpf):
     if len(cpf) != 11 or not cpf.isdigit():
         raise ValueError("CPF inválido. Deve conter 11 dígitos numéricos.")
-    elif cpf in [usuario['cpf'] for usuario in usuarios]:
+    elif cpf in [usuario["cpf"] for usuario in usuarios]:
         raise ValueError("CPF já cadastrado. Por favor, utilize outro CPF.")
 
 def formata_endereco():
@@ -63,17 +93,36 @@ def formata_endereco():
     endereco_formatado = f"{logradouro}, {numero} - {bairro} - {cidade}/{estado}"
     return endereco_formatado
 
+def executar_criar_nova_conta():
+    nome = input("Informe seu nome: ")
+    data_nascimento = input("Informe sua data de nascimento (DD/MM/AAAA): ")
+    cpf = input("Informe seu CPF (somente números): ")
+    endereco = formata_endereco()
+    usuarios.append(
+            criar_nova_conta(
+                    nome=nome,
+                    data_nascimento=data_nascimento,
+                    cpf=cpf,
+                    endereco=endereco,
+                )
+            )
+    print("Conta criada com sucesso!")
+
 def exibir_informacoes_usuario(cpf):
-    if not any(usuario['cpf'] == cpf for usuario in usuarios):
+    if not any(usuario["cpf"] == cpf for usuario in usuarios):
         print("Usuário não encontrado.")
         return
-    else: 
-        usuario = next(usuario for usuario in usuarios if usuario['cpf'] == cpf)
+    else:
+        usuario = next(usuario for usuario in usuarios if usuario["cpf"] == cpf)
         print(f"===== INFORMAÇÕES DO USUÁRIO: =====")
         print(f"Nome: {usuario['nome']}")
         print(f"Data de Nascimento: {usuario['data_nascimento']}")
         print(f"CPF: {usuario['cpf']}")
         print(f"Endereço: {usuario['endereco']}")
+
+def executar_exibir_informacoes_usuario():
+    cpf = input("Informe o CPF do usuário: ")
+    exibir_informacoes_usuario(cpf)
 
 def exibir_menu():
     print("\n===== MENU =====")
@@ -85,49 +134,30 @@ def exibir_menu():
     print("6. Sair")
 
 def main():
-    global saldo, saques_realizados, extrato, usuarios
+    saques_realizados = 0
+    global saldo, extrato, usuarios
+
     print("Bem-vindo ao Sistema Bancário!")
     while True:
         exibir_menu()
         opcao = input("Escolha uma opção: ")
 
-        if opcao == '1':
-            valor = float(input("Informe o valor do saque: R$ "))
-            saldo, saques_realizados, descricao = saque(
-                saldo=saldo,
-                saques_realizados=saques_realizados,
-                valor=valor
-            )
-            if descricao:
-                extrato.append(descricao)
+        if opcao == "1":
+           saldo, saques_realizados = executar_saque(saldo=saldo, saques_realizados=saques_realizados)
 
-        elif opcao == '2':
-            valor = float(input("Informe o valor do depósito: R$ "))
-            saldo, descricao = deposito(saldo, valor)
-            if descricao:
-                extrato.append(descricao)
+        elif opcao == "2":
+            saldo = executar_deposito(saldo)
 
-        elif opcao == '3':
-            extrato_bancario(saldo, extrato=extrato)
+        elif opcao == "3":
+            executar_extrato_bancario(saldo, extrato=extrato)
 
-        elif opcao == '4': 
-            nome = input("Informe seu nome: ")
-            data_nascimento = input("Informe sua data de nascimento (DD/MM/AAAA): ")
-            cpf = input("Informe seu CPF (somente números): ")
-            endereco = formata_endereco()
-            usuarios.append(criar_nova_conta(
-                nome=nome,
-                data_nascimento=data_nascimento,
-                cpf=cpf,
-                endereco=endereco
-            ))
-            print("Conta criada com sucesso!")
+        elif opcao == "4":
+            executar_criar_nova_conta()
 
-        elif opcao == '5':
-            cpf = input("Informe o CPF do usuário: ")
-            exibir_informacoes_usuario(cpf)
+        elif opcao == "5":
+            executar_exibir_informacoes_usuario()
 
-        elif opcao == '6':
+        elif opcao == "6":
             print("Saindo do sistema. Até logo!")
             break
 
@@ -135,7 +165,7 @@ def main():
             print("Opção inválida. Tente novamente.")
 
         continuar = input("\nDeseja realizar outra operação? (s/n): ").lower()
-        if continuar != 's':
+        if continuar != "s":
             print("Encerrando sessão. Obrigado por usar nosso sistema!")
             break
 
