@@ -82,15 +82,52 @@ def exibir_informacoes_usuario(cpf, usuarios):
         print(f"Endereço: {usuario['endereco']}")
 
 
+def criar_conta(usuarios, contas):
+    cpf = input("Informe seu CPF (somente números): ").strip()
+    
+    if len(cpf) != 11 or not cpf.isdigit():
+        print("CPF inválido. Deve conter 11 dígitos numéricos.")
+        return None
+
+    usuario = next((u for u in usuarios if u["cpf"] == cpf), None)
+    if not usuario:
+        print("CPF não cadastrado. Por favor, crie um usuário primeiro.")
+        return None
+
+    agencia = "0001"
+    numero_conta = len(contas) + 1
+    nova_conta = {
+        "agencia": agencia,
+        "numero_conta": numero_conta,
+        "usuario": usuario,
+        "saldo": 0.00,
+        "saques_realizados": 0,
+        "extrato": []
+    }
+
+    contas.append(nova_conta)
+    print(f"Conta {numero_conta} criada com sucesso para {usuario['nome']}!")
+    return contas
+
+def exibe_contas(contas):
+    if not contas:
+        print("Nenhuma conta cadastrada.")
+        return
+    for conta in contas:
+        print(f"Agência: {conta['agencia']}, Conta: {conta['numero_conta']}, "
+              f"Usuário: {conta['usuario']['nome']}, Saldo: R$ {conta['saldo']:.2f}")
+
 def exibir_menu():
     print(
         "\n===== MENU =====\n"
         "1. Saque\n"
         "2. Depósito\n"
         "3. Extrato\n"
-        "4. Criar nova conta\n"
+        "4. Cadastrar usuário\n"
         "5. Exibir informações do usuário\n"
-        "6. Sair"
+        "6. Criar nova conta\n"
+        "7. Exibir contas cadastradas\n"
+        "8. Sair"
     )
 
 
@@ -163,6 +200,7 @@ def main():
     saldo = 0.00
     extrato = []
     usuarios = []
+    contas = []
 
     print("Bem-vindo ao Sistema Bancário!")
     while True:
@@ -187,6 +225,13 @@ def main():
             executar_exibir_informacoes_usuario(usuarios)
 
         elif opcao == "6":
+            contas = criar_conta(usuarios, contas)
+
+        elif opcao == "7":
+            print("Exibindo contas cadastradas:")
+            exibe_contas(contas)
+
+        elif opcao == "8":
             print("Saindo do sistema. Até logo!")
             break
 
