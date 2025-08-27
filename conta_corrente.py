@@ -1,4 +1,5 @@
 from conta import Conta
+from transacao import Transacao
 
 class ContaCorrente(Conta):
     def __init__(self, numero, cliente, limite = 500.0, limite_saques = 3):
@@ -7,8 +8,8 @@ class ContaCorrente(Conta):
         self.limite_saques = limite_saques
 
     def sacar(self, valor):
-        saques_realizados = len[transacao for transacao in self.historico.transacoes
-                                if transacao['tipo'] == 'Saque']
+        saques_realizados = len([transacao for transacao in self.historico.transacoes 
+                                if transacao['tipo'] == 'Saque'])
         excedeu_saldo = valor > self.saldo
         excedeu_limite = valor > self.limite
         excedeu_saques = saques_realizados >= self.limite_saques

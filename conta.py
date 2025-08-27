@@ -1,3 +1,5 @@
+from historico import Historico
+
 class Conta:
     def __init__(self, numero, cliente):
         self._saldo = 0.0
@@ -42,7 +44,7 @@ class Conta:
     def depositar(self, valor):
         if valor > 0:
             self.saldo += valor
-            print(f"Depósito de R$ {valor} realizado com sucesso.")]
+            print(f"Depósito de R$ {valor} realizado com sucesso.")
         else:
             print("Valor de depósito inválido.")
             return False
