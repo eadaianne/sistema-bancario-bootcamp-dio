@@ -33,9 +33,9 @@ class Conta:
         return cls(numero, cliente)
 
     def sacar(self, valor):
-        if valor > 0 and valor <= self.saldo:
-            self.saldo -= valor
-            print(f"Saque de R$ {valor} realizado com sucesso.")
+        if valor > 0 and valor <= self._saldo:
+            self._saldo -= valor
+            print(f"Saque de R$ {valor:.2f} realizado com sucesso.")
             return True
         else:
             print("Saldo insuficiente ou valor inválido.")
@@ -43,9 +43,9 @@ class Conta:
 
     def depositar(self, valor):
         if valor > 0:
-            self.saldo += valor
-            print(f"Depósito de R$ {valor} realizado com sucesso.")
+            self._saldo += valor
+            print(f"Depósito de R$ {valor:.2f} realizado com sucesso.")
+            return True
         else:
             print("Valor de depósito inválido.")
             return False
-        return True
